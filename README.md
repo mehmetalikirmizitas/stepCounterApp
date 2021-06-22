@@ -1,2 +1,2 @@
-# pedometerApp
-Simple Pedometer app with flutter
+# stepCounterApp
+Simple step counter app with flutter
