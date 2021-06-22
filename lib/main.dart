@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:pedometer/pedometer.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 String formatDate(DateTime d) {
   return d.toString().substring(0, 19);
@@ -18,10 +19,34 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late Stream<StepCount> _stepCountStream;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
+  late Permission permission;
+  PermissionStatus permissionStatus = PermissionStatus.denied;
   String _status = '?', _steps = '?';
+
+  void _listenForPermission() async {
+    final status = await Permission.activityRecognition.status;
+    setState(() {
+      permissionStatus = status;
+    });
+    switch (status) {
+      case PermissionStatus.denied:
+        requestForPermission();
+        break;
+      default:
+        break;
+    }
+  }
+
+  Future<void> requestForPermission() async {
+    final status = await Permission.activityRecognition.request();
+    setState(() {
+      permissionStatus = status;
+    });
+  }
 
   @override
   void initState() {
+    _listenForPermission();
     super.initState();
     initPlatformState();
   }
